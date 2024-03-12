@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "S": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "L": {
+      "item": "minecraft:gold_nugget"
+    },
+    "A": {
+      "item": "minecraft:totem_of_undying"
+    }
+  },
+  "pattern": [
+    "LLL",
+    "LSL",
+    "SAS"
+  ],
+  "result": {
+    "item": "extraspellattributes:nonbelieversamulet"
+  }
+}

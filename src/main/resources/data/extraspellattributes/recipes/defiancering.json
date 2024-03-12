@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "S": {
+      "item": "minecraft:ghast_tear"
+    },
+    "L": {
+      "item": "minecraft:gold_ingot"
+    }
+  },
+  "pattern": [
+    "LLL",
+    "L L",
+    "LSL"
+  ],
+  "result": {
+    "item": "extraspellattributes:defiancering"
+  }
+}

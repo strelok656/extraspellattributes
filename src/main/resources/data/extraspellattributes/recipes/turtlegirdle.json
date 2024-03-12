@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "S": {
+      "item": "minecraft:scute"
+    },
+    "L": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "pattern": [
+    "SLS",
+    "L L",
+    "LSL"
+  ],
+  "result": {
+    "item": "extraspellattributes:turtlegirdle"
+  }
+}

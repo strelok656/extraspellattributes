@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "S": {
+      "item": "minecraft:ghast_tear"
+    },
+    "L": {
+      "item": "minecraft:gold_ingot"
+    },
+    "A": {
+      "item": "minecraft:totem_of_undying"
+    }
+  },
+  "pattern": [
+    "LLL",
+    "LSL",
+    " A "
+  ],
+  "result": {
+    "item": "extraspellattributes:undyingsoul"
+  }
+}
