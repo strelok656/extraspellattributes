@@ -54,14 +54,7 @@ public class LivingEntityMixin {
 			if (living.getRandom().nextFloat() < glancingchance) {
 				amount *= 0.65;
 			}
-			if(living.getAttributeInstance(ENDURANCE) != null) {
-				double endurance = 0.01 * (living.getAttributeValue(ENDURANCE) - 100);
 
-				if(living.getRandom().nextFloat() < glancingchance){
-					amount = (float) Math.max(0,amount - living.getMaxHealth()*endurance);
-				}
-
-			}
 
 		}
 		Registry<DamageType> registry = ((DamageSourcesAccessor)living.getDamageSources()).getRegistry();
@@ -76,6 +69,10 @@ public class LivingEntityMixin {
 					amount *= 0;
 				}
 			}
+		}
+		if(living.getAttributeInstance(DEFIANCE) != null) {
+			amount -= (float) Math.pow(living.getAttributeValue(DEFIANCE),0.5);
+
 		}
 		return amount;
 	}
@@ -193,6 +190,7 @@ public class LivingEntityMixin {
 		info.getReturnValue().add(SPELLSUPPRESS);
 		info.getReturnValue().add(ACRO);
 		info.getReturnValue().add(ENDURANCE);
+		info.getReturnValue().add(DEFIANCE);
 		info.getReturnValue().add(RECOUP);
 
 	}

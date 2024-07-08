@@ -8,6 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.spell_power.api.enchantment.Enchantments_SpellPower;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -69,6 +70,7 @@ public class PlayerMixin implements PlayerInterface, RecoupLivingEntityInterface
     public List<RecoupInstance> getRecoups() {
         return this.recoupInstances;
     }
+
 
     @Override
     public void tickRecoups() {

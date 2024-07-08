@@ -1,8 +1,8 @@
 package com.extraspellattributes.mixin;
 
 import net.minecraft.entity.attribute.*;
-import net.spell_power.api.MagicSchool;
-import net.spell_power.api.attributes.SpellAttributes;
+import net.spell_power.api.SpellPower;
+import net.spell_power.api.SpellSchools;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -87,17 +87,17 @@ public class AttributeMixin {
             double added = 0;
             double added2 = 0;
             double added3 = 0;
-            EntityAttributeInstance addedinstance1 = (EntityAttributeInstance) this.custom.get(SpellAttributes.POWER.get(MagicSchool.FIRE).attribute);
-            EntityAttributeInstance addedinstance2 = (EntityAttributeInstance) this.custom.get(SpellAttributes.POWER.get(MagicSchool.FROST).attribute);
-            EntityAttributeInstance addedinstance3 = (EntityAttributeInstance) this.custom.get(SpellAttributes.POWER.get(MagicSchool.ARCANE).attribute);
-            if (addedinstance1 != null && addedinstance2 != null && addedinstance3 != null) {
-                if (percentinstance1 != null) {
+            EntityAttributeInstance addedinstance1 = (EntityAttributeInstance) this.custom.get(SpellSchools.FIRE.attribute);
+
+            EntityAttributeInstance addedinstance2 = (EntityAttributeInstance) this.custom.get(SpellSchools.FROST.attribute);
+            EntityAttributeInstance addedinstance3 = (EntityAttributeInstance) this.custom.get(SpellSchools.ARCANE.attribute);
+                if (percentinstance1 != null && addedinstance1 != null) {
                     added = addedinstance1.getValue();
                 }
-                if (percentinstance2 != null) {
+                if (percentinstance2 != null && addedinstance2 != null) {
                     added2 = addedinstance2.getValue();
                 }
-                if (percentinstance3 != null) {
+                if (percentinstance3 != null && addedinstance3 != null) {
                     added3 = addedinstance3.getValue();
                 }
 
@@ -120,12 +120,12 @@ public class AttributeMixin {
                 if (percent1 + percent2 + percent3 > 0) {
                     info.setReturnValue(total);
                 }
-            }
+
         }
     }
     @Inject(at = @At("HEAD"), method = "getValue", cancellable = true)
     private void getAttributeValueCONVERTTO(EntityAttribute attribute, CallbackInfoReturnable<Double> info) {
-        if(attribute == SpellAttributes.POWER.get(MagicSchool.ARCANE).attribute){
+        /*if(attribute == (SpellSchools.ARCANE).attribute){
             AttributeContainer container = (AttributeContainer) (Object) this;
             EntityAttributeInstance percentinstance3 = (EntityAttributeInstance)this.custom.get(CONVERTTOARCANE);
             double value3 = 100;
@@ -142,13 +142,13 @@ public class AttributeMixin {
                 if (percentinstance3 != null) {
                     added3 = addedinstance3.getValue();
                 }
-                EntityAttributeInstance damageinstance = (EntityAttributeInstance) this.custom.get(SpellAttributes.POWER.get(MagicSchool.ARCANE).attribute);
-                double total = this.fallback.getValue(SpellAttributes.POWER.get(MagicSchool.ARCANE).attribute);
+                EntityAttributeInstance damageinstance = (EntityAttributeInstance) this.custom.get((SpellSchools.ARCANE).attribute);
+                double total = this.fallback.getValue((SpellSchools.ARCANE).attribute);
 
                 if (damageinstance != null) {
-                    total = this.computeValue(damageinstance, SpellAttributes.POWER.get(MagicSchool.ARCANE).attribute);
-                    if (percent3 > 0 && attribute == SpellAttributes.POWER.get(MagicSchool.ARCANE).attribute) {
-                        total += this.computeAdded(percent3 * added3, damageinstance, SpellAttributes.POWER.get(MagicSchool.ARCANE).attribute);
+                    total = this.computeValue(damageinstance, (SpellSchools.ARCANE).attribute);
+                    if (percent3 > 0 && attribute == (SpellSchools.ARCANE).attribute) {
+                        total += this.computeAdded(percent3 * added3, damageinstance, (SpellSchools.ARCANE).attribute);
                     }
                 }
 
@@ -157,7 +157,7 @@ public class AttributeMixin {
                 }
             }
         }
-        if(attribute == SpellAttributes.POWER.get(MagicSchool.FIRE).attribute){
+        if(attribute == SpellSchools.FIRE.attribute){
             AttributeContainer container = (AttributeContainer) (Object) this;
             EntityAttributeInstance percentinstance3 = (EntityAttributeInstance)this.custom.get(CONVERTTOFIRE);
             double value3 = 100;
@@ -174,13 +174,13 @@ public class AttributeMixin {
                 if (percentinstance3 != null) {
                     added3 = addedinstance3.getValue();
                 }
-                EntityAttributeInstance damageinstance = (EntityAttributeInstance) this.custom.get(SpellAttributes.POWER.get(MagicSchool.FIRE).attribute);
-                double total = this.fallback.getValue(SpellAttributes.POWER.get(MagicSchool.FIRE).attribute);
+                EntityAttributeInstance damageinstance = (EntityAttributeInstance) this.custom.get(SpellSchools.FIRE.attribute);
+                double total = this.fallback.getValue(SpellSchools.FIRE.attribute);
 
                 if (damageinstance != null) {
-                    total = this.computeValue(damageinstance, SpellAttributes.POWER.get(MagicSchool.FIRE).attribute);
-                    if (percent3 > 0 && attribute == SpellAttributes.POWER.get(MagicSchool.FIRE).attribute) {
-                        total += this.computeAdded(percent3 * added3, damageinstance, SpellAttributes.POWER.get(MagicSchool.FIRE).attribute);
+                    total = this.computeValue(damageinstance, SpellSchools.FIRE.attribute);
+                    if (percent3 > 0 && attribute == SpellSchools.FIRE.attribute) {
+                        total += this.computeAdded(percent3 * added3, damageinstance, SpellSchools.FIRE.attribute);
                     }
                 }
 
@@ -189,7 +189,7 @@ public class AttributeMixin {
                 }
             }
         }
-        if(attribute == SpellAttributes.POWER.get(MagicSchool.FROST).attribute){
+        if(attribute == SpellSchools.FROST.attribute){
             AttributeContainer container = (AttributeContainer) (Object) this;
             EntityAttributeInstance percentinstance3 = (EntityAttributeInstance)this.custom.get(CONVERTTOFROST);
             double value3 = 100;
@@ -207,12 +207,12 @@ public class AttributeMixin {
                     added3 = addedinstance3.getValue();
                 }
 
-                EntityAttributeInstance damageinstance = (EntityAttributeInstance) this.custom.get(SpellAttributes.POWER.get(MagicSchool.FROST).attribute);
-                double total = this.fallback.getValue(SpellAttributes.POWER.get(MagicSchool.FROST).attribute);
+                EntityAttributeInstance damageinstance = (EntityAttributeInstance) this.custom.get(SpellSchools.FROST.attribute);
+                double total = this.fallback.getValue(SpellSchools.FROST.attribute);
                 if (damageinstance != null) {
-                    total = this.computeValue(damageinstance, SpellAttributes.POWER.get(MagicSchool.FROST).attribute);
-                    if (percent3 > 0 && attribute == SpellAttributes.POWER.get(MagicSchool.FROST).attribute) {
-                        total += this.computeAdded(percent3 * added3, damageinstance, SpellAttributes.POWER.get(MagicSchool.FROST).attribute);
+                    total = this.computeValue(damageinstance, SpellSchools.FROST.attribute);
+                    if (percent3 > 0 && attribute == SpellSchools.FROST.attribute) {
+                        total += this.computeAdded(percent3 * added3, damageinstance, SpellSchools.FROST.attribute);
                     }
                 }
 
@@ -221,7 +221,7 @@ public class AttributeMixin {
                 }
             }
         }
-        if(attribute == SpellAttributes.POWER.get(MagicSchool.HEALING).attribute){
+        if(attribute == SpellSchools.HEALING.attribute){
             AttributeContainer container = (AttributeContainer) (Object) this;
             EntityAttributeInstance percentinstance3 = (EntityAttributeInstance)this.custom.get(CONVERTTOHEAL);
             double value3 = 100;
@@ -237,12 +237,12 @@ public class AttributeMixin {
                 if (percentinstance3 != null) {
                     added3 = addedinstance3.getValue();
                 }
-                EntityAttributeInstance damageinstance = (EntityAttributeInstance) this.custom.get(SpellAttributes.POWER.get(MagicSchool.HEALING).attribute);
-                double total = this.fallback.getValue(SpellAttributes.POWER.get(MagicSchool.HEALING).attribute);
+                EntityAttributeInstance damageinstance = (EntityAttributeInstance) this.custom.get(SpellSchools.HEALING.attribute);
+                double total = this.fallback.getValue(SpellSchools.HEALING.attribute);
                 if (damageinstance != null) {
-                    total = this.computeValue(damageinstance, SpellAttributes.POWER.get(MagicSchool.HEALING).attribute);
-                    if (percent3 > 0 && attribute == SpellAttributes.POWER.get(MagicSchool.HEALING).attribute) {
-                        total += this.computeAdded(percent3 * added3, damageinstance, SpellAttributes.POWER.get(MagicSchool.HEALING).attribute);
+                    total = this.computeValue(damageinstance, SpellSchools.HEALING.attribute);
+                    if (percent3 > 0 && attribute == SpellSchools.HEALING.attribute) {
+                        total += this.computeAdded(percent3 * added3, damageinstance, SpellSchools.HEALING.attribute);
                     }
                 }
 
@@ -250,7 +250,7 @@ public class AttributeMixin {
                     info.setReturnValue(total);
                 }
             }
-        }
+        }*/
     }
 
 }

@@ -1,6 +1,8 @@
 package com.extraspellattributes.mixin;
 
 import com.extraspellattributes.ReabsorptionInit;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import dev.emi.trinkets.api.SlotGroup;
 import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketsApi;
@@ -30,17 +32,17 @@ import java.util.Map;
 
 @Mixin(ItemStack.class)
 public class ItemstackMixin {
-    @Inject(at = @At("TAIL"), method = "getTooltip", cancellable = true)
-    public void getTooltip(@Nullable PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> info) {
-        List<Text> tooltip = info.getReturnValue();
-        if(tooltip.stream().anyMatch(text -> text.toString().contains("extraspellattributes.endu")) ||
+
+    @ModifyReturnValue(at = @At("TAIL"), method = "getTooltip")
+    public List<Text> getTooltipextraspellattributes(List<Text> tooltip, @Nullable PlayerEntity player, TooltipContext context) {
+        if(tooltip.stream().anyMatch(text -> text.toString().contains("extraspellattributes.defi")) ||
                 tooltip.stream().anyMatch(text -> text.toString().contains("extraspellattributes.glancingblow")) ||
                 tooltip.stream().anyMatch(text -> text.toString().contains("extraspellattributes.serenity")) ||
                 tooltip.stream().anyMatch(text -> text.toString().contains("extraspellattributes.spellsuppression")) ||
                 tooltip.stream().anyMatch(text -> text.toString().contains("extraspellattributes.determination")) ||
                 tooltip.stream().anyMatch(text -> text.toString().contains("extraspellattributes.reabsorption"))) {
-            if (tooltip.stream().anyMatch(text -> text.toString().contains("extraspellattributes.endu"))) {
-                tooltip.add(Text.translatable("desc.extraspellattributes.endu").formatted(Formatting.GRAY));
+            if (tooltip.stream().anyMatch(text -> text.toString().contains("extraspellattributes.defi"))) {
+                tooltip.add(Text.translatable("desc.extraspellattributes.defi").formatted(Formatting.GRAY));
             }
             if (tooltip.stream().anyMatch(text -> text.toString().contains("extraspellattributes.glancingblow"))) {
                 tooltip.add(Text.translatable("desc.extraspellattributes.glance").formatted(Formatting.GRAY));
@@ -61,8 +63,9 @@ public class ItemstackMixin {
                 tooltip.add(Text.translatable("desc.extraspellattributes.reabsorption").formatted(Formatting.GRAY));
 
             }
-            info.setReturnValue(tooltip);
         }
+        return tooltip;
+
     }
 
 }

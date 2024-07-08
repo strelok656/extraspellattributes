@@ -23,7 +23,7 @@ public class BlackBelt extends TrinketItem {
     public Multimap<EntityAttribute, EntityAttributeModifier> getModifiers(ItemStack stack, SlotReference slot, LivingEntity entity, UUID uuid) {
         var modifiers = super.getModifiers(stack, slot, entity, uuid);
         // +10% movement speed
-        modifiers.put(ReabsorptionInit.ENDURANCE, new EntityAttributeModifier(uuid, "extraspellattributes:extraspellattributes", value, EntityAttributeModifier.Operation.MULTIPLY_BASE));
+        modifiers.put(ReabsorptionInit.DEFIANCE, new EntityAttributeModifier(uuid, "extraspellattributes:extraspellattributes", value, EntityAttributeModifier.Operation.ADDITION));
         // If the player has access to ring slots, this will give them an extra one
         return modifiers;
     }

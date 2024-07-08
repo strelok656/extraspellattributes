@@ -14,50 +14,78 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class ItemInit {
+
     public static ItemGroup extraspellattributes;
-    public static final Item GOLDQUARTZRING = new Ring(new FabricItemSettings().maxCount(1),4);
-    public static final Item NETHERITEDIAMOND = new Ring(new FabricItemSettings().maxCount(1),6);
-    public static final Item GOLDQUARTZAMULET = new Amulet(new FabricItemSettings().maxCount(1),0.25F);
-    public static final Item NETHERITEDIAMONDAMULET = new Amulet(new FabricItemSettings().maxCount(1),0.5F);
-    public static final Item MARTIALBRACER = new MartialBracer(new FabricItemSettings().maxCount(1),0.3F);
-    public static final Item ARCANEBRACER = new ArcaneBracer(new FabricItemSettings().maxCount(1),0.25F);
-    public static final Item NONBELIEVER = new NonbelieverAmulet(new FabricItemSettings().maxCount(1),0.5F);
-    public static final Item BLACKBELT = new BlackBelt(new FabricItemSettings().maxCount(1),0.25F);
-    public static final Item SANGUINERING = new SanguineRing(new FabricItemSettings().maxCount(1),0.15F);
-    public static final Item UNDYINGNECKLACE = new SanguineNecklace(new FabricItemSettings().maxCount(1),0.30F);
-
+    public static Item GOLDQUARTZRING;
+    public static Item NETHERITEDIAMOND;
+    public static Item GOLDQUARTZAMULET;
+    public static Item NETHERITEDIAMONDAMULET;
     public static RegistryKey<ItemGroup> KEY = RegistryKey.of(Registries.ITEM_GROUP.getKey(),new Identifier(ReabsorptionInit.MOD_ID,"generic"));
-
-    public static void register(){
+    private static Item registerItem(String name, Item item){
+        return Registry.register(Registries.ITEM, new Identifier(ReabsorptionInit.MOD_ID,name),item);
+    }
+    private static void addItemToGroup(Item item){
+        ItemGroupEvents.modifyEntriesEvent(KEY).register((content) -> {
+            content.add(item);
+        });
+    }
+    public static void register() {
+        GOLDQUARTZRING = registerItem("goldquartzring", new Ring(new FabricItemSettings().maxCount(1), ReabsorptionInit.config.gold_absorption_ring_mod));
         extraspellattributes = FabricItemGroup.builder()
-                .icon(() -> new ItemStack(ItemInit.GOLDQUARTZRING))
+                .icon(() -> new ItemStack(GOLDQUARTZRING))
                 .displayName(Text.translatable("itemGroup.extraspellattributes.general"))
                 .build();
-
         Registry.register(Registries.ITEM_GROUP, KEY, extraspellattributes);
-        Registry.register(Registries.ITEM,new Identifier(ReabsorptionInit.MOD_ID,"goldquartzring"),GOLDQUARTZRING);
-        Registry.register(Registries.ITEM,new Identifier(ReabsorptionInit.MOD_ID,"goldquartzamulet"),GOLDQUARTZAMULET);
-        Registry.register(Registries.ITEM,new Identifier(ReabsorptionInit.MOD_ID,"netheritediamondring"),NETHERITEDIAMOND);
-        Registry.register(Registries.ITEM,new Identifier(ReabsorptionInit.MOD_ID,"netheritediamondamulet"),NETHERITEDIAMONDAMULET);
-        Registry.register(Registries.ITEM,new Identifier(ReabsorptionInit.MOD_ID,"martialbracer"),MARTIALBRACER);
-        Registry.register(Registries.ITEM,new Identifier(ReabsorptionInit.MOD_ID,"arcanebracer"),ARCANEBRACER);
-        Registry.register(Registries.ITEM,new Identifier(ReabsorptionInit.MOD_ID,"nonbelieversamulet"),NONBELIEVER);
-        Registry.register(Registries.ITEM,new Identifier(ReabsorptionInit.MOD_ID,"turtlegirdle"),BLACKBELT);
-        Registry.register(Registries.ITEM,new Identifier(ReabsorptionInit.MOD_ID,"defiancering"),SANGUINERING);
-        Registry.register(Registries.ITEM,new Identifier(ReabsorptionInit.MOD_ID,"undyingsoul"),UNDYINGNECKLACE);
 
-        ItemGroupEvents.modifyEntriesEvent(KEY).register((content) -> {
-            content.add(GOLDQUARTZRING);
-            content.add(NETHERITEDIAMOND);
-            content.add(GOLDQUARTZAMULET);
-            content.add(NETHERITEDIAMONDAMULET);
-            content.add(MARTIALBRACER);
-            content.add(BLACKBELT);
-            content.add(ARCANEBRACER);
-            content.add(NONBELIEVER);
-            content.add(SANGUINERING);
-            content.add(UNDYINGNECKLACE);
-        });
+        addItemToGroup(GOLDQUARTZRING);
+
+        NETHERITEDIAMOND = registerItem("netheritediamondring",new Ring(new FabricItemSettings().maxCount(1),ReabsorptionInit.config.netherite_absorption_ring_mod));
+        addItemToGroup(NETHERITEDIAMOND);
+
+        GOLDQUARTZAMULET = registerItem("goldquartzamulet",new Amulet(new FabricItemSettings().maxCount(1),ReabsorptionInit.config.gold_absorption_necklace_mod));
+        addItemToGroup(GOLDQUARTZAMULET);
+
+        NETHERITEDIAMONDAMULET = registerItem("netheritediamondamulet",new Amulet(new FabricItemSettings().maxCount(1),ReabsorptionInit.config.netherite_absorption_necklace_mod));
+        addItemToGroup(NETHERITEDIAMONDAMULET);
+
+        if(ReabsorptionInit.config.turtle_bracer)
+        {
+            Item MARTIALBRACER = registerItem("martialbracer",new MartialBracer(new FabricItemSettings().maxCount(1),ReabsorptionInit.config.turtle_bracer_mod));
+            addItemToGroup(MARTIALBRACER);
+
+        }
+        if(ReabsorptionInit.config.arcane_bracer)
+        {
+            Item ARCANEBRACER = registerItem("arcanebracer",new ArcaneBracer(new FabricItemSettings().maxCount(1),ReabsorptionInit.config.arcane_bracer_mod));
+            addItemToGroup(ARCANEBRACER);
+
+        }
+        if(ReabsorptionInit.config.nonbeliever)
+        {
+            Item NONBELIEVER = registerItem("nonbelieversamulet",new NonbelieverAmulet(new FabricItemSettings().maxCount(1),ReabsorptionInit.config.nonbeliever_mod));
+            addItemToGroup(NONBELIEVER);
+
+        }
+        if(ReabsorptionInit.config.turtle_girdle)
+        {
+            Item BLACKBELT = registerItem("turtlegirdle",new BlackBelt(new FabricItemSettings().maxCount(1),ReabsorptionInit.config.turtle_girdle_mod));
+            addItemToGroup(BLACKBELT);
+
+        }
+        if(ReabsorptionInit.config.defiance_ring)
+        {
+            Item SANGUINERING = registerItem("defiancering",new SanguineRing(new FabricItemSettings().maxCount(1),ReabsorptionInit.config.defiance_ring_mod));
+            addItemToGroup(SANGUINERING);
+
+        }
+        if(ReabsorptionInit.config.undying_soul)
+        {
+            Item UNDYINGNECKLACE = registerItem("undyingsoul",new SanguineNecklace(new FabricItemSettings().maxCount(1),ReabsorptionInit.config.undying_soul_mod));
+            addItemToGroup(UNDYINGNECKLACE);
+
+        }
+
+
 
     }
 }
