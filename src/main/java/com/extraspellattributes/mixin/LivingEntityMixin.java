@@ -2,7 +2,6 @@ package com.extraspellattributes.mixin;
 
 import com.extraspellattributes.PlayerInterface;
 import com.extraspellattributes.interfaces.RecoupLivingEntityInterface;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
@@ -21,6 +20,7 @@ import net.minecraft.util.collection.DefaultedList;
 import net.spell_power.mixin.DamageSourcesAccessor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -83,9 +83,7 @@ public class LivingEntityMixin {
 			recoupLivingEntityInterface.tickRecoups();
 		}
 		double maximum = living.getAttributeValue(WARDING);
-		if(FabricLoader.getInstance().isModLoaded("spellbladenext") && Registries.ATTRIBUTE.get(new Identifier("spellbladenext","warding")) != null){
-			maximum += living.getAttributeValue(Registries.ATTRIBUTE.get(new Identifier("spellbladenext","warding")));
-		}
+
 		if (living instanceof PlayerInterface damageInterface && maximum > 0) {
 
 			if(!living.getWorld().getGameRules().getBoolean(CLASSIC_ENERGYSHIELD)) {
@@ -117,13 +115,21 @@ public class LivingEntityMixin {
 
 		}
 	}
-	@Inject(at = @At("HEAD"), method = "onEquipStack", cancellable = true)
-	public void onEquipStackabsorption(EquipmentSlot slot, ItemStack oldStack, ItemStack newStack, CallbackInfo info) {
-		if (newStack.getAttributeModifiers(slot).containsKey(WARDING)) {
-			LivingEntity entity = (LivingEntity) (Object) this;
-			if (entity instanceof PlayerInterface playerDamageInterface) {
-				playerDamageInterface.resetReabDamageAbsorbed();
+	@Unique
+	private static final ThreadLocal<Boolean> PROCESSING = ThreadLocal.withInitial(() -> false);
+
+	@Inject(method = "onEquipStack", at = @At("HEAD"))
+	private void onEquipStackAbsorption(EquipmentSlot slot, ItemStack oldStack, ItemStack newStack, CallbackInfo ci) {
+		if (PROCESSING.get()) return;
+		PROCESSING.set(true);
+		try {
+			if (this instanceof PlayerInterface playerDamageInterface) {
+				if (!newStack.isEmpty() && newStack.getAttributeModifiers(slot).containsKey(WARDING)) {
+					playerDamageInterface.resetReabDamageAbsorbed();
+				}
 			}
+		} finally {
+			PROCESSING.set(false);
 		}
 	}
 	@Inject(at = @At("HEAD"), method = "Lnet/minecraft/entity/LivingEntity;sendEquipmentChanges(Ljava/util/Map;)V", cancellable = true)
