@@ -2,12 +2,21 @@ package com.extraspellattributes.mixin;
 
 
 import com.extraspellattributes.PlayerInterface;
+import com.extraspellattributes.ReabsorptionInit;
 import com.extraspellattributes.api.RecoupInstance;
 import com.extraspellattributes.interfaces.RecoupLivingEntityInterface;
+import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
 import net.spell_power.api.enchantment.Enchantments_SpellPower;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,8 +35,9 @@ import static net.minecraft.util.math.MathHelper.sqrt;
 @Mixin(PlayerEntity.class)
 public class PlayerMixin implements PlayerInterface, RecoupLivingEntityInterface {
     public Entity lastReabAttacked;
-    public int lastReabhurt;
+    public int lastReabhurt = 0;
     public float damageReabAbsorbed;
+    public boolean reabsorbing = false;
     public List<RecoupInstance> recoupInstances = new ArrayList<RecoupInstance>(List.of());
 
     public int getReabLasthurt() {
@@ -37,6 +47,11 @@ public class PlayerMixin implements PlayerInterface, RecoupLivingEntityInterface
     @Override
     public float getReabDamageAbsorbed() {
         return damageReabAbsorbed;
+    }
+
+    @Override
+    public boolean getReabsorbing() {
+        return reabsorbing;
     }
 
     @Override
@@ -50,8 +65,15 @@ public class PlayerMixin implements PlayerInterface, RecoupLivingEntityInterface
         damageReabAbsorbed = damageReabAbsorbed + i;
     }
 
+    @Override
+    public void setReabsorbing(boolean set) {
+        reabsorbing = set;
+    }
+
     public void setReabLasthurt(int lasthurt) {
         this.lastReabhurt = lasthurt;
+
+        this.setReabsorbing(false);
     }
 
 
@@ -59,8 +81,13 @@ public class PlayerMixin implements PlayerInterface, RecoupLivingEntityInterface
     @Inject(at = @At("HEAD"), method = "applyDamage", cancellable = true)
     protected void applyDamageMixinSpellblade(DamageSource source, float amount, CallbackInfo info) {
         PlayerEntity player = (PlayerEntity) (Object) this;
-        if (!player.isInvulnerableTo(source)) {
+        if (!player.isInvulnerableTo(source) && amount > 0) {
             this.setReabLasthurt(player.age);
+            setReabsorbing(false);
+            if(player instanceof ServerPlayerEntity) {
+                ServerPlayNetworking.send((ServerPlayerEntity) player, new Identifier(ReabsorptionInit.MOD_ID, "reabstop"), PacketByteBufs.empty());
+                    ServerPlayNetworking.send((ServerPlayerEntity) player, new Identifier(ReabsorptionInit.MOD_ID, "lasthurt"), PacketByteBufs.empty());
+            }
             this.resetReabDamageAbsorbed();
         }
     }

@@ -17,8 +17,13 @@
 	"entrypoints": {
 		"main": [
 			"com.extraspellattributes.ReabsorptionInit"
+		],
+		"client":
+				[
+					"com.extraspellattributes.ReabsorptionClient"
 		]
 	},
+	"accessWidener" : "extraspellattributes.accesswidener",
 	"mixins": [
 		"extraspellattributes.mixins.json"
 	],

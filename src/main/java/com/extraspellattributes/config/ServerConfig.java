@@ -7,6 +7,12 @@ import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 @Config(name = "server_v3")
 public class ServerConfig  implements ConfigData {
     public ServerConfig(){}
+    @Comment("Reabsorption regeneration factor (proportion of 25% of maximum per second) - Default: 1.0")
+    public float factor = 1.0F;
+    @Comment("Reabsorption regeneration delay in seconds - Default: 4.0")
+    public float delay = 4.0F;
+    @Comment("Reabsorption custom visuals (Default: true)")
+    public boolean visuals = true;
     @Comment("Registration of turtle bracer")
     public boolean turtle_bracer = true;
     @Comment("Mod of turtle bracer")

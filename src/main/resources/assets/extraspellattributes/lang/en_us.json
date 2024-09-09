@@ -15,14 +15,14 @@
 
   "attribute.name.extraspellattributes.determination": "Determination",
 
-  "desc.extraspellattributes.glance": "A Glancing Blow deals only 65% damage. You cannot receive Glancing Blows from attacks which don't come from an entity (Such as Fire and Poison).",
+  "desc.extraspellattributes.glance": "A Glancing Blow deals only 65% damage. You cannot receive Glancing Blows from damage that doesn't come from an entity (Such as Fire and Poison).",
 
   "desc.extraspellattributes.supp": "A Suppressed Spell deals only 50% damage.",
 
   "desc.extraspellattributes.defi": "Your Defiance subtracts its total from the total damage you take. Defiance has diminishing returns.",
   "desc.extraspellattributes.acro":"Your % Spellbreak is the chance that a suppressed spell instead deals no damage. Spellbreak caps at 75%.",
-  "desc.extraspellattributes.determination":"Your % Determination is the proportion of health lost that regenerates as health over the next four seconds.",
-  "desc.extraspellattributes.reabsorption":"You regenerate Absorption (Yellow Hearts) up to your maximum Reabsorption gradually after not being hit for 2 seconds.",
+  "desc.extraspellattributes.determination":"Your % Determination is the proportion of health lost that regenerates back over the next four seconds.",
+  "desc.extraspellattributes.reabsorption":"You regenerate Absorption (Yellow Hearts) up to your maximum Reabsorption gradually after not being hit for 4 seconds.",
 
   "itemGroup.extraspellattributes.general": "Extra RPG Attributes Trinkets",
   "item.extraspellattributes.netheritediamondring": "Netherite Diamond Ring",

@@ -1,7 +1,10 @@
 package com.extraspellattributes.mixin;
 
 import com.extraspellattributes.PlayerInterface;
+import com.extraspellattributes.ReabsorptionInit;
 import com.extraspellattributes.interfaces.RecoupLivingEntityInterface;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
@@ -15,6 +18,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.spell_power.mixin.DamageSourcesAccessor;
@@ -87,10 +91,11 @@ public class LivingEntityMixin {
 		if (living instanceof PlayerInterface damageInterface && maximum > 0) {
 
 			if(!living.getWorld().getGameRules().getBoolean(CLASSIC_ENERGYSHIELD)) {
-				float additional = (float) (0.05 * maximum * (0.173287 * Math.pow(Math.E, -0.173287 * 0.05 * (living.age - damageInterface.getReabLasthurt()))));
+				float additional = (float) (config.factor * 0.05 * maximum * (0.173287 * Math.pow(Math.E, -0.173287 * 0.05 * (living.age - damageInterface.getReabLasthurt()))));
 				if (damageInterface.getReabLasthurt() != 0 && living.age - damageInterface.getReabLasthurt() < 100 * 20 && damageInterface.getReabDamageAbsorbed() + additional <= maximum) {
 					damageInterface.ReababsorbDamage(additional);
 				}
+
 				if (living.age < 16 * 20 && damageInterface.getReabLasthurt() == 0 && damageInterface.getReabDamageAbsorbed() + additional <= maximum) {
 					damageInterface.ReababsorbDamage(additional);
 				}
@@ -102,9 +107,16 @@ public class LivingEntityMixin {
 				}
 			}
 			else{
-				float additional = (float)maximum*0.25F*0.05F;
+				float additional = (float)maximum*0.25F*0.05F*config.factor;
 
-				if(living.age - damageInterface.getReabLasthurt() >= 4*20){
+				if(living.age - damageInterface.getReabLasthurt() >= config.delay *20){
+					if(!damageInterface.getReabsorbing()) {
+
+						damageInterface.setReabsorbing(true);
+						if (living instanceof ServerPlayerEntity) {
+							ServerPlayNetworking.send((ServerPlayerEntity) living, new Identifier(ReabsorptionInit.MOD_ID, "reab"), PacketByteBufs.empty());
+						}
+					}
 					if(living.getAbsorptionAmount() < maximum) {
 						if (!living.getWorld().isClient()) {
 							living.setAbsorptionAmount((float) Math.min(living.getAbsorptionAmount() + additional, maximum));

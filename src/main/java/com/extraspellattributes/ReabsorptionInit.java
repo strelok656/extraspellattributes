@@ -102,6 +102,7 @@ public class ReabsorptionInit implements ModInitializer {
 		CONVERTFROMARCANE.setTracked(true);
 		CONVERTFROMFROST.setTracked(true);
 		CONVERTFROMFIRE.setTracked(true);
+		WARDING.setTracked(true);
 		SpellSchools.FROST.addSource(SpellSchool.Trait.POWER, SpellSchool.Apply.ADD,queryArgs -> {
 			return queryArgs.entity().getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE)*0.01*(queryArgs.entity().getAttributeValue(CONVERTTOFROST)-100);
 		});

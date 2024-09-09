@@ -11,6 +11,8 @@ public interface PlayerInterface {
     float getReabDamageAbsorbed();
     void resetReabDamageAbsorbed();
     void ReababsorbDamage(float i);
+    boolean getReabsorbing();
+    void setReabsorbing(boolean bool);
 
     void setReabLasthurt(int lasthurt);
 
