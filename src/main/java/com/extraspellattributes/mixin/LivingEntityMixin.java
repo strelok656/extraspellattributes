@@ -74,8 +74,9 @@ public class LivingEntityMixin {
 				}
 			}
 		}
-		if(living.getAttributeInstance(DEFIANCE) != null) {
+		if(living.getAttributeInstance(DEFIANCE) != null && amount > 1) {
 			amount -= (float) Math.pow(living.getAttributeValue(DEFIANCE),0.5);
+			amount = Math.max(1,amount);
 
 		}
 		return amount;
