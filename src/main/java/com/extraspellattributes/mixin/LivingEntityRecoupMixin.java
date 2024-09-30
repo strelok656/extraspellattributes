@@ -2,8 +2,10 @@ package com.extraspellattributes.mixin;
 
 import com.extraspellattributes.PlayerInterface;
 import com.extraspellattributes.api.RecoupInstance;
+import com.extraspellattributes.enchantments.ExtraRPGEnchantment;
 import com.extraspellattributes.interfaces.RecoupLivingEntityInterface;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
@@ -40,8 +42,13 @@ public class LivingEntityRecoupMixin {
 	@Inject(at = @At("HEAD"), method = "onDamage", cancellable = true)
 	public  void damageRecoup(DamageSource source, float amount, CallbackInfo info) {
 		LivingEntity living = (LivingEntity) entity;
-		if(living instanceof RecoupLivingEntityInterface recoupLivingEntityInterface && living instanceof PlayerEntity player && player.getAttributeValue(RECOUP) > 100){
-			recoupLivingEntityInterface.addRecoup(new RecoupInstance(player, 80, amount*0.01*(player.getAttributeValue(RECOUP)-100)));
+
+
+		if(living instanceof RecoupLivingEntityInterface recoupLivingEntityInterface && living instanceof PlayerEntity player){
+			double total = amount*(0.01*((living.getAttributeValue(RECOUP)-100)+ ExtraRPGEnchantment.getEnchantmentLevelEquipmentSum(BATTLEROUSE,living)*config.battlerouseenchant));
+			if(total > 0) {
+				recoupLivingEntityInterface.addRecoup(new RecoupInstance(player, 80, total));
+			}
 		}
 	}
 

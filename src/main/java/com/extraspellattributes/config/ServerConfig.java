@@ -7,6 +7,26 @@ import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 @Config(name = "server_v3")
 public class ServerConfig  implements ConfigData {
     public ServerConfig(){}
+    @Comment("Warding enchant bonus per 1 level - Default: 1.0")
+    public float wardingenchant = 1F;
+    @Comment("Battle Rouse enchant bonus per 1 level - Default: 0.04")
+    public float battlerouseenchant = 0.04F;
+    @Comment("Defiance enchant bonus per 1 level - Default: 0.25")
+    public float defianceEnchant = 0.25F;
+    @Comment("Evasion enchant bonus per 1 level - Default: 0.04")
+    public float evasionEnchant = 0.04F;
+    @Comment("Spellbreak enchant bonus per 1 level - Default: 0.04")
+    public float spellbreakEnchant = 0.04F;
+    @Comment("Suppressing enchant bonus per 1 level - Default: 0.04")
+    public float suppressingEnchant = 0.04F;
+    @Comment("Glancing Blow damage factor - Default: 0.65")
+    public float glancingBlowFactor = 0.65F;
+    @Comment("Suppression damage factor - Default: 0.5")
+    public float suppressionDamageFactor = 0.5F;
+    @Comment("Spellbreak damage factor - Default: 0.0")
+    public float spellbreakDamageFactor = 0.0F;
+    @Comment("Max spellbreak - Default: 0.75")
+    public float maxSpellbreak = 0.75F;
     @Comment("Reabsorption regeneration factor (proportion of 25% of maximum per second) - Default: 1.0")
     public float factor = 1.0F;
     @Comment("Reabsorption regeneration delay in seconds - Default: 4.0")

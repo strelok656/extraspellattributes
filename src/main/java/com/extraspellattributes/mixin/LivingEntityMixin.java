@@ -2,9 +2,11 @@ package com.extraspellattributes.mixin;
 
 import com.extraspellattributes.PlayerInterface;
 import com.extraspellattributes.ReabsorptionInit;
+import com.extraspellattributes.enchantments.ExtraRPGEnchantment;
 import com.extraspellattributes.interfaces.RecoupLivingEntityInterface;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
@@ -19,8 +21,12 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
+import net.spell_engine.api.spell.SpellInfo;
 import net.spell_power.mixin.DamageSourcesAccessor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -55,27 +61,47 @@ public class LivingEntityMixin {
 		amount = originalAmount;
 		if(living.getAttributeInstance(GLANCINGBLOW) != null && source.getAttacker() != null){
 			double glancingchance = 0.01*(living.getAttributeValue(GLANCINGBLOW)-100);
-			if (living.getRandom().nextFloat() < glancingchance) {
-				amount *= 0.65;
-			}
+			glancingchance += ExtraRPGEnchantment.getEnchantmentLevelEquipmentSum(EVASION,living)*config.evasionEnchant;
 
+			if (living.getRandom().nextFloat() < glancingchance) {
+				amount *= config.glancingBlowFactor;
+				if (living.getWorld() instanceof ServerWorld serverWorld) {
+
+					serverWorld.playSound(null, living.getBlockPos(), SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, SoundCategory.PLAYERS, 0.5F, 1);
+				}
+
+			}
 
 		}
 		Registry<DamageType> registry = ((DamageSourcesAccessor)living.getDamageSources()).getRegistry();
 
 		if(living.getAttributeInstance(SPELLSUPPRESS) != null && source.getType().equals(registry.entryOf(DamageTypes.MAGIC).value()) || source.getType().equals(registry.entryOf(DamageTypes.INDIRECT_MAGIC).value())){
 			double suppresschance = 0.01*(living.getAttributeValue(SPELLSUPPRESS)-100);
+			suppresschance += ExtraRPGEnchantment.getEnchantmentLevelEquipmentSum(SUPPRESSING,living)*config.suppressingEnchant;
 
 			if(living.getRandom().nextFloat() < suppresschance){
-				amount *= 0.5;
+				amount *= config.suppressionDamageFactor;
 				double acro = 0.01 * (living.getAttributeValue(ACRO) - 100);
+				acro += ExtraRPGEnchantment.getEnchantmentLevelEquipmentSum(SPELLBREAK,living)*config.spellbreakEnchant;
+				acro = Math.max(acro,config.maxSpellbreak);
 				if (living.getRandom().nextFloat() <  acro) {
-					amount *= 0;
+					amount *= config.spellbreakDamageFactor;
+					if(living.getWorld() instanceof ServerWorld serverWorld) {
+						serverWorld.playSound(null,living.getBlockPos(),SoundEvents.ENTITY_ELDER_GUARDIAN_CURSE, SoundCategory.PLAYERS, 0.5F, 1);
+					}
+
+				}
+				else{
+					if(living.getWorld() instanceof ServerWorld serverWorld) {
+
+						serverWorld.playSound(null, living.getBlockPos(), SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 0.5F, 1);
+
+					}
 				}
 			}
 		}
 		if(living.getAttributeInstance(DEFIANCE) != null && amount > 1) {
-			amount -= (float) Math.pow(living.getAttributeValue(DEFIANCE),0.5);
+			amount -= (float) Math.pow(living.getAttributeValue(DEFIANCE)+ExtraRPGEnchantment.getEnchantmentLevelEquipmentSum(DEFIANCEENCHANT,living)*config.defianceEnchant,0.5);
 			amount = Math.max(1,amount);
 
 		}
@@ -88,7 +114,7 @@ public class LivingEntityMixin {
 			recoupLivingEntityInterface.tickRecoups();
 		}
 		double maximum = living.getAttributeValue(WARDING);
-
+		maximum += ExtraRPGEnchantment.getEnchantmentLevelEquipmentSum(WARDINGENCHANT,living)*config.wardingenchant;
 		if (living instanceof PlayerInterface damageInterface && maximum > 0) {
 
 			if(!living.getWorld().getGameRules().getBoolean(CLASSIC_ENERGYSHIELD)) {
@@ -128,6 +154,7 @@ public class LivingEntityMixin {
 
 		}
 	}
+
 	@Unique
 	private static final ThreadLocal<Boolean> PROCESSING = ThreadLocal.withInitial(() -> false);
 
@@ -145,56 +172,7 @@ public class LivingEntityMixin {
 			PROCESSING.set(false);
 		}
 	}
-	@Inject(at = @At("HEAD"), method = "Lnet/minecraft/entity/LivingEntity;sendEquipmentChanges(Ljava/util/Map;)V", cancellable = true)
-	private void sendEquipmentChanges(Map<EquipmentSlot, ItemStack> equipmentChanges, CallbackInfo callbackInfo) {
-		LivingEntity living = (LivingEntity) (Object) this;
-		Map<EquipmentSlot, ItemStack> map = null;
-		EquipmentSlot[] var2 = EquipmentSlot.values();
-		int var3 = var2.length;
 
-		for(int var4 = 0; var4 < var3; ++var4) {
-			EquipmentSlot equipmentSlot = var2[var4];
-			ItemStack itemStack;
-			if(equipmentSlot.getType().equals(EquipmentSlot.Type.ARMOR)) {
-				itemStack = this.getSyncedArmorStack(equipmentSlot);
-
-				ItemStack itemStack2 = living.getEquippedStack(equipmentSlot);
-				if (living.areItemsDifferent(itemStack, itemStack2)) {
-					float toremove = 0;
-					Collection<EntityAttributeModifier> modifiers = itemStack.getAttributeModifiers(equipmentSlot).get(WARDING);
-					Collection<EntityAttributeModifier> modifiers2 = itemStack2.getAttributeModifiers(equipmentSlot).get(WARDING);
-
-					for (EntityAttributeModifier modifier : modifiers) {
-						if (modifier.getOperation().equals(EntityAttributeModifier.Operation.ADDITION)) {
-							toremove -= modifier.getValue();
-						}
-					}
-					for (EntityAttributeModifier modifier : modifiers2) {
-						if (modifier.getOperation().equals(EntityAttributeModifier.Operation.ADDITION)) {
-							toremove += modifier.getValue();
-						}
-					}
-					Collection<EntityAttributeModifier> modifiers3 = living.getAttributeInstance(WARDING).getModifiers(EntityAttributeModifier.Operation.MULTIPLY_BASE);
-					Collection<EntityAttributeModifier> modifiers4 = living.getAttributeInstance(WARDING).getModifiers(EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
-					float mult = 1;
-					for (EntityAttributeModifier modifier : modifiers3) {
-						mult += modifier.getValue();
-					}
-					toremove *= mult;
-					for (EntityAttributeModifier modifier : modifiers4) {
-						toremove *= 1+modifier.getValue();
-					}
-					if (toremove < 0 && !living.getWorld().isClient()) {
-						living.setAbsorptionAmount(living.getAbsorptionAmount() + toremove);
-						if (living instanceof PlayerInterface playerDamageInterface) {
-							playerDamageInterface.resetReabDamageAbsorbed();
-						}
-					}
-
-				}
-			}
-		}
-	}
 	@Inject(method = "createLivingAttributes", at = @At("RETURN"))
 	private static void addAttributesextraspellattributes_RETURN(final CallbackInfoReturnable<DefaultAttributeContainer.Builder> info) {
 		info.getReturnValue().add(WARDING);

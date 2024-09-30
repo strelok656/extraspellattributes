@@ -75,12 +75,12 @@ public class ReabsorptionInit implements ModInitializer {
 
 		AutoConfig.register(ServerConfigWrapper.class, PartitioningSerializer.wrap(JanksonConfigSerializer::new));
 		config = AutoConfig.getConfigHolder(ServerConfigWrapper.class).getConfig().server;
-		Registry.register(Registries.ENCHANTMENT, new Identifier(MOD_ID, "battle"), FROST);
-		Registry.register(Registries.ENCHANTMENT, new Identifier(MOD_ID, "frost"), FROST);
-		Registry.register(Registries.ENCHANTMENT, new Identifier(MOD_ID, "frost"), FROST);
-		Registry.register(Registries.ENCHANTMENT, new Identifier(MOD_ID, "frost"), FROST);
-		Registry.register(Registries.ENCHANTMENT, new Identifier(MOD_ID, "frost"), FROST);
-		Registry.register(Registries.ENCHANTMENT, new Identifier(MOD_ID, "frost"), FROST);
+		Registry.register(Registries.ENCHANTMENT, new Identifier(MOD_ID, "battlerouse"), BATTLEROUSE);
+		Registry.register(Registries.ENCHANTMENT, new Identifier(MOD_ID, "defiance"),  DEFIANCEENCHANT);
+		Registry.register(Registries.ENCHANTMENT, new Identifier(MOD_ID, "glancingblow"),  EVASION);
+		Registry.register(Registries.ENCHANTMENT, new Identifier(MOD_ID, "spellbreak"),  SPELLBREAK);
+		Registry.register(Registries.ENCHANTMENT, new Identifier(MOD_ID, "suppression"),  SUPPRESSING);
+		Registry.register(Registries.ENCHANTMENT, new Identifier(MOD_ID, "warding"),  WARDINGENCHANT);
 		ItemInit.register();
 		CustomTrades.registerCustomTrades();
 		LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {

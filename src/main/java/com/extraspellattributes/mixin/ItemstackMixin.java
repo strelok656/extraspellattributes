@@ -41,24 +41,7 @@ public class ItemstackMixin {
                 tooltip.stream().anyMatch(text -> text.toString().contains("extraspellattributes.spellsuppression")) ||
                 tooltip.stream().anyMatch(text -> text.toString().contains("extraspellattributes.determination")) ||
                 tooltip.stream().anyMatch(text -> text.toString().contains("extraspellattributes.reabsorption"))) {
-            if (tooltip.stream().anyMatch(text -> text.toString().contains("extraspellattributes.defi"))) {
-                tooltip.add(Text.translatable("desc.extraspellattributes.defi").formatted(Formatting.GRAY));
-            }
-            if (tooltip.stream().anyMatch(text -> text.toString().contains("extraspellattributes.glancingblow"))) {
-                tooltip.add(Text.translatable("desc.extraspellattributes.glance").formatted(Formatting.GRAY));
-            }
-            if (tooltip.stream().anyMatch(text -> text.toString().contains("extraspellattributes.serenity"))) {
-                tooltip.add(Text.translatable("desc.extraspellattributes.acro").formatted(Formatting.GRAY));
 
-            }
-            if (tooltip.stream().anyMatch(text -> text.toString().contains("extraspellattributes.spellsuppression"))) {
-                tooltip.add(Text.translatable("desc.extraspellattributes.supp").formatted(Formatting.GRAY));
-
-            }
-            if (tooltip.stream().anyMatch(text -> text.toString().contains("extraspellattributes.determination"))) {
-                tooltip.add(Text.translatable("desc.extraspellattributes.determination").formatted(Formatting.GRAY));
-
-            }
             if (tooltip.stream().anyMatch(text -> text.toString().contains("extraspellattributes.reabsorption"))) {
                 tooltip.add(Text.translatable("desc.extraspellattributes.reabsorption").formatted(Formatting.GRAY));
 
