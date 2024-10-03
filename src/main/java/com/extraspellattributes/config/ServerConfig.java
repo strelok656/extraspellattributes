@@ -7,6 +7,11 @@ import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 @Config(name = "server_v3")
 public class ServerConfig  implements ConfigData {
     public ServerConfig(){}
+    @Comment("Enchantments exclusive with each other - Default: True")
+    public boolean exclusiveEachOther = true;
+    @Comment("Enchantments exclusive with protection - Default: False")
+    public boolean exclusiveProtection = false;
+
     @Comment("Warding enchant bonus per 1 level - Default: 1.0")
     public float wardingenchant = 1F;
     @Comment("Battle Rouse enchant bonus per 1 level - Default: 0.04")

@@ -1,5 +1,6 @@
 package com.extraspellattributes.enchantments;
 
+import com.extraspellattributes.ReabsorptionInit;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.EnchantmentTarget;
@@ -60,11 +61,11 @@ public class ExtraRPGEnchantment extends Enchantment {
 
     @Override
     protected boolean canAccept(Enchantment other) {
-        if (other instanceof MagicProtectionEnchantment) {
+        if (ReabsorptionInit.config.exclusiveProtection && other instanceof   MagicProtectionEnchantment) {
             return false;
-        } else if(other instanceof ExtraRPGEnchantment) {
+        } else if(ReabsorptionInit.config.exclusiveEachOther && other instanceof ExtraRPGEnchantment) {
             return false;
-        }else if ((other instanceof ProtectionEnchantment)) {
+        }else if (ReabsorptionInit.config.exclusiveProtection && (other instanceof ProtectionEnchantment)) {
             return false;
         }
         else {

@@ -32,7 +32,7 @@ public class Ring extends TrinketItem {
     public Multimap<EntityAttribute, EntityAttributeModifier> getModifiers(ItemStack stack, SlotReference slot, LivingEntity entity, UUID uuid) {
         var modifiers = super.getModifiers(stack, slot, entity, uuid);
         // +10% movement speed
-        modifiers.put(ReabsorptionInit.WARDING, new EntityAttributeModifier(uuid, "extraspellattributes:extraspellattributes", value, EntityAttributeModifier.Operation.ADDITION));
+        modifiers.put(ReabsorptionInit.WARDING, new EntityAttributeModifier(uuid, "extraspellattributes:ringwarding", value, EntityAttributeModifier.Operation.ADDITION));
         // If the player has access to ring slots, this will give them an extra one
         return modifiers;
     }
