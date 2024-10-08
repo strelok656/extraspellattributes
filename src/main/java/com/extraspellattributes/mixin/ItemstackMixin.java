@@ -32,7 +32,7 @@ import java.util.Map;
 
 @Mixin(ItemStack.class)
 public class ItemstackMixin {
-
+    @ModifyVariable()
     @ModifyReturnValue(at = @At("TAIL"), method = "getTooltip")
     public List<Text> getTooltipextraspellattributes(List<Text> tooltip, @Nullable PlayerEntity player, TooltipContext context) {
         if(tooltip.stream().anyMatch(text -> text.toString().contains("extraspellattributes.defi")) ||
